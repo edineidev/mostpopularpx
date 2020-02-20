@@ -6,7 +6,6 @@ function RunOnLoad() {
   var ctx = canvas.getContext("2d");
 
   function handleImage(e) {
-    console.log("handleImage");
     var reader = new FileReader();
     reader.onload = function(event) {
       var img = new Image();
@@ -16,14 +15,23 @@ function RunOnLoad() {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        //invertColors(ctx, imgData)
+        //invertColors(ctx, imgData);
 
         let mapOfPopulariesResult = mapOfPopularies(imgData);
         let mostPopularRank = [];
 
+        var isChecked = document.getElementById('removeSimilar').checked;
+
         let rankTotal = 5;
         for (let index = 0; index < rankTotal; index++) {
-          let theMostPopular = getTheMostPopular(mapOfPopulariesResult);
+          let theMostPopular;
+          if (isChecked) {
+            theMostPopular = getTheMostPopular(mapOfPopulariesResult, mostPopularRank);
+          }
+          else {
+            theMostPopular = getTheMostPopular(mapOfPopulariesResult);
+          }
+
           mostPopularRank.push(theMostPopular);
           mapOfPopulariesResult.delete(theMostPopular[0]);
         }
@@ -39,12 +47,30 @@ function RunOnLoad() {
     };
     reader.readAsDataURL(e.target.files[0]);
 
-    function getTheMostPopular(mapOfPopulariesResult) {
+    function getTheMostPopular(mapOfPopulariesResult, filterSimilarPixel) {
       let mostPopular = [...mapOfPopulariesResult.entries()].reduce((a, e) =>
-        e[1] > a[1] ? e : a
+        (e[1] > a[1]) && IsSimilarPixel(a[0], filterSimilarPixel) ? e : a
       );
 
       return mostPopular;
+    }
+
+    function IsSimilarPixel(pixelToCompareRgb, pixels) {
+      if (!pixels) {
+        return true;
+      }
+
+      pixelToCompareRgb = pixelToCompareRgb.split(", ");
+      for (const pixel of pixels) {
+        for (const pixelToCompare of pixelToCompareRgb) {
+          let constains = pixel[0].split(", ").filter(value => pixelToCompare == value);
+          if (constains.length > 0) {
+            return true;
+          }
+        }
+      }
+
+      return false;
     }
 
     function setBackgroundColor(elementId, colorRGB) {
