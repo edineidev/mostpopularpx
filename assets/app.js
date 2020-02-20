@@ -6,7 +6,6 @@ function RunOnLoad() {
   var ctx = canvas.getContext("2d");
 
   function handleImage(e) {
-    console.log("handleImage");
     var reader = new FileReader();
     reader.onload = function(event) {
       var img = new Image();
@@ -16,7 +15,7 @@ function RunOnLoad() {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        //invertColors(ctx, imgData)
+        //invertColors(ctx, imgData);
 
         let mapOfPopulariesResult = mapOfPopularies(imgData);
         let mostPopularRank = [];
@@ -60,18 +59,18 @@ function RunOnLoad() {
       if (!pixels) {
         return true;
       }
-      //12, 105, 196
+
       pixelToCompareRgb = pixelToCompareRgb.split(", ");
       for (const pixel of pixels) {
         for (const pixelToCompare of pixelToCompareRgb) {
-          let constains = pixel.includes(pixelToCompare);
-          if (constains) {
-            return false;
+          let constains = pixel[0].split(", ").filter(value => pixelToCompare == value);
+          if (constains.length > 0) {
+            return true;
           }
         }
       }
 
-      return true;
+      return false;
     }
 
     function setBackgroundColor(elementId, colorRGB) {
