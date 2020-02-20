@@ -21,9 +21,18 @@ function RunOnLoad() {
         let mapOfPopulariesResult = mapOfPopularies(imgData);
         let mostPopularRank = [];
 
+        var isChecked = document.getElementById('removeSimilar').checked;
+
         let rankTotal = 5;
         for (let index = 0; index < rankTotal; index++) {
-          let theMostPopular = getTheMostPopular(mapOfPopulariesResult);
+          let theMostPopular;
+          if (isChecked) {
+            theMostPopular = getTheMostPopular(mapOfPopulariesResult, mostPopularRank);
+          }
+          else {
+            theMostPopular = getTheMostPopular(mapOfPopulariesResult);
+          }
+
           mostPopularRank.push(theMostPopular);
           mapOfPopulariesResult.delete(theMostPopular[0]);
         }
@@ -39,12 +48,30 @@ function RunOnLoad() {
     };
     reader.readAsDataURL(e.target.files[0]);
 
-    function getTheMostPopular(mapOfPopulariesResult) {
+    function getTheMostPopular(mapOfPopulariesResult, filterSimilarPixel) {
       let mostPopular = [...mapOfPopulariesResult.entries()].reduce((a, e) =>
-        e[1] > a[1] ? e : a
+        (e[1] > a[1]) && IsSimilarPixel(a[0], filterSimilarPixel) ? e : a
       );
 
       return mostPopular;
+    }
+
+    function IsSimilarPixel(pixelToCompareRgb, pixels) {
+      if (!pixels) {
+        return true;
+      }
+      //12, 105, 196
+      pixelToCompareRgb = pixelToCompareRgb.split(", ");
+      for (const pixel of pixels) {
+        for (const pixelToCompare of pixelToCompareRgb) {
+          let constains = pixel.includes(pixelToCompare);
+          if (constains) {
+            return false;
+          }
+        }
+      }
+
+      return true;
     }
 
     function setBackgroundColor(elementId, colorRGB) {
