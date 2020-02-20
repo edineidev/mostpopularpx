@@ -14,7 +14,7 @@
     <input type="checkbox" id="removeSimilar" name="removeSimilar" /><br />
     <label for="imageLoader">Image File:</label><br />
     <input type="file" id="imageLoader" name="imageLoader" /><br />
-    
+
     <canvas id="imageCanvas" width="200" height="200"></canvas>
     <div>
       <div class="top" id="top-0"></div>
@@ -24,5 +24,20 @@
       <div class="top" id="top-4"></div>
     </div>
     <script src="assets/app.js"></script>
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-56663343-5"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-56663343-5");
+    </script>
   </body>
 </html>
