@@ -1,2 +1,2 @@
 # mostpopularpx
-Most popular pixel in an image
+(Draft) Mostpopularpx: The Most popular pixels in an image
