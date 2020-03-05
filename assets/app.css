@@ -5,3 +5,7 @@
   border-style: solid;
   float: left;
 }
+.value-hex {
+  background-color: aliceblue;
+  border: 1px solid;
+}
