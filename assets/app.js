@@ -9,45 +9,55 @@
     var ctx = canvas.getContext("2d");
 
     var reader = new FileReader();
-    reader.onload = function(event) {
+    reader.onload = (event) => {
       var img = new Image();
-      img.onload = function() {
+      img.onload = () => {
         canvas.width = 200; //img.width;
         canvas.height = 200; //img.height;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        let mapOfPopulariesResult = mapOfPopularies(imgData);
-        let mostPopularRank = [];
-
-        var isChecked = document.getElementById("removeSimilar").checked;
-
-        let rankTotal = 5;
-        for (let index = 0; index < rankTotal; index++) {
-          let theMostPopular;
-          if (isChecked) {
-            theMostPopular = getTheMostPopular(
-              mapOfPopulariesResult,
-              mostPopularRank
-            );
-          } else {
-            theMostPopular = getTheMostPopular(mapOfPopulariesResult);
-          }
-
-          mostPopularRank.push(theMostPopular);
-          mapOfPopulariesResult.delete(theMostPopular[0]);
-        }
+        mostPopularRank = analizeImage(imgData);
 
         console.log(mostPopularRank);
 
-        for (let index = 0; index < mostPopularRank.length; index++) {
-          setBackgroundColor(`top-${index}`, mostPopularRank[index]);
-        }
+        render(mostPopularRank);
       };
 
       img.src = event.target.result;
     };
     reader.readAsDataURL(e.target.files[0]);
+  }
+
+  function analizeImage(imgData) {
+    let mapOfPopulariesResult = mapOfPopularies(imgData);
+    let mostPopularRank = [];
+
+    var isChecked = document.getElementById("removeSimilar").checked;
+
+    let rankTotal = 5;
+    for (let index = 0; index < rankTotal; index++) {
+      let theMostPopular;
+      if (isChecked) {
+        theMostPopular = getTheMostPopular(
+          mapOfPopulariesResult,
+          mostPopularRank
+        );
+      } else {
+        theMostPopular = getTheMostPopular(mapOfPopulariesResult);
+      }
+
+      mostPopularRank.push(theMostPopular);
+      mapOfPopulariesResult.delete(theMostPopular[0]);
+    }
+
+    return mostPopularRank;
+  }
+
+  function render(mostPopularRank) {
+    for (let index = 0; index < mostPopularRank.length; index++) {
+      setBackgroundColor(`top-${index}`, mostPopularRank[index]);
+    }
   }
 
   function getTheMostPopular(mapOfPopulariesResult, filterSimilarPixel) {
