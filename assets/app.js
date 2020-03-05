@@ -9,7 +9,7 @@
     var ctx = canvas.getContext("2d");
 
     var reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = event => {
       var img = new Image();
       img.onload = () => {
         canvas.width = 200; //img.width;
@@ -54,10 +54,19 @@
     return mostPopularRank;
   }
 
-  function render(mostPopularRank) {
-    for (let index = 0; index < mostPopularRank.length; index++) {
-      setBackgroundColor(`top-${index}`, mostPopularRank[index]);
+  function mapOfPopularies(imgData) {
+    let mapPopularies = new Map();
+    for (let i = 0; i < imgData.data.length; i += 4) {
+      let key = `${imgData.data[i]}, ${imgData.data[i + 1]}, ${
+        imgData.data[i + 2]
+      }`;
+      if (mapPopularies.get(key)) {
+        mapPopularies.set(key, mapPopularies.get(key) + 1);
+      } else {
+        mapPopularies.set(key, 1);
+      }
     }
+    return mapPopularies;
   }
 
   function getTheMostPopular(mapOfPopulariesResult, filterSimilarPixel) {
@@ -88,10 +97,35 @@
     return false;
   }
 
-  function setBackgroundColor(elementId, colorRGB) {
-    var element = document.getElementById(elementId);
-    element.style.backgroundColor = `rgb(${colorRGB})`;
+  function render(mostPopularRank) {
+    for (let index = 0; index < mostPopularRank.length; index++) {
+      var elementRank = document.getElementById(`top-${index}`);
+      elementRank.style.backgroundColor = `rgb(${mostPopularRank[index][0]})`;
+
+      let [r, g, b] = mostPopularRank[index][0].split(", ");
+
+      elementRank.querySelector(".value-hex").textContent = `#${fullColorHex(
+        r,
+        g,
+        b
+      )}`;
+    }
   }
+
+  var fullColorHex = function(r, g, b) {
+    var red = rgbToHex(r);
+    var green = rgbToHex(g);
+    var blue = rgbToHex(b);
+    return red + green + blue;
+  };
+
+  var rgbToHex = function(rgb) {
+    var hex = Number(rgb).toString(16);
+    if (hex.length < 2) {
+      hex = "0" + hex;
+    }
+    return hex;
+  };
 
   function invertColors(ctx, imgData) {
     for (i = 0; i < imgData.data.length; i += 4) {
@@ -102,21 +136,6 @@
     }
 
     ctx.putImageData(imgData, 0, 0);
-  }
-
-  function mapOfPopularies(imgData) {
-    let mapPopularies = new Map();
-    for (let i = 0; i < imgData.data.length; i += 4) {
-      let key = `${imgData.data[i]}, ${imgData.data[i + 1]}, ${
-        imgData.data[i + 2]
-      }`;
-      if (mapPopularies.get(key)) {
-        mapPopularies.set(key, mapPopularies.get(key) + 1);
-      } else {
-        mapPopularies.set(key, 1);
-      }
-    }
-    return mapPopularies;
   }
 
   window.addEventListener("load", init);
